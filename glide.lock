@@ -1,0 +1,26 @@
+hash: 825995511dd125c9b2f5581ac0d67aa8786189c480b647c3c06865ce93a483f1
+updated: 2019-04-16T10:04:20.099573167+02:00
+imports:
+- name: github.com/alecthomas/kingpin
+  version: 947dcec5ba9c011838740e680966fd7087a71d0d
+- name: github.com/alecthomas/template
+  version: a0175ee3bccc567396460bf5acd36800cb10c49c
+  subpackages:
+  - parse
+- name: github.com/alecthomas/units
+  version: 2efee857e7cfd4f3d0138cc3cbb1b4966962b93a
+- name: github.com/konsorten/go-windows-terminal-sequences
+  version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
+- name: github.com/oracle/oci-go-sdk
+  version: 8a0a9588f6153e492adf2f9fe7489e2eea1876e5
+  subpackages:
+  - common
+  - core
+  - identity
+- name: github.com/sirupsen/logrus
+  version: 8bdbc7bcc01dcbb8ec23dc8a28e332258d25251f
+- name: golang.org/x/sys
+  version: 3fd5a3612ccd7907f26270fa92579a0f2f76f734
+  subpackages:
+  - unix
+testImports: []

@@ -1,0 +1,17 @@
+foss:
+  compile_targets:
+    defaults:
+      output: oci-hosts-builder-{{version}}-{{os}}-{{arch}}
+
+    64bit_linux:
+      os: linux
+      arch: amd64
+
+  packages:
+    el7_64:
+      name: oci-hosts-builder
+      release: 1
+      dist: el7
+      template: el/el7
+      target_arch: x86_64
+      binary: 64bit_linux
