@@ -1,2 +1,4 @@
-oci-hosts-builder*
+oci-hosts-builder
+*.rpm
+oci-hosts-builder-*
 vendor
