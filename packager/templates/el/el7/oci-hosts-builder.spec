@@ -29,8 +29,7 @@ Creates /etc/hosts based on all Private IPs found in a compartment or set of com
 %pre
 getent group ocihostsmgr >/dev/null || groupadd -r ocihostsmgr
 getent passwd ocihostsmgr >/dev/null || \
-    useradd -r -g ocihostsmgr -d HOMEDIR -s /home/ocihostsmgr \
-    -c "/etc/hosts manager" ocihostsmgr
+    useradd -r -g ocihostsmgr -d /home/ocihostsmgr -s /bin/bash -m -c "/etc/hosts manager" ocihostsmgr
 exit 0
 
 %install
