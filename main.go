@@ -16,15 +16,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var (
+	configfile string
+	debug      bool
+	outfile    = "/etc/hosts"
+)
+
 func main() {
 	compartment := ""
-	debug := false
 	hosts := bytes.NewBuffer([]byte{})
-	outfile := "/etc/hosts"
 
 	app := kingpin.New("oci-hosts-builder", "Builds an /etc/hosts style file for a Oracle Cloud tenancy that spans multiple VCN")
 	app.Arg("compartment", "The compartment OCID to query, specify the root compartment to traverse all compartments").Required().StringVar(&compartment)
 	app.Arg("hosts", "The file to append the discovered nodes to").Default("/etc/hosts").StringVar(&outfile)
+	app.Flag("config", "OCI Configuration file with paths to access keys etc").StringVar(&configfile)
 	app.Flag("debug", "Enable debug logging").Default("false").BoolVar(&debug)
 
 	kingpin.MustParse(app.Parse(os.Args[1:]))
@@ -71,6 +76,15 @@ func main() {
 	err = writeHosts(outfile, hosts)
 	kingpin.FatalIfError(err, "Could not write %s", outfile)
 	logrus.Infof("Wrote %d lines to %s", cnt, outfile)
+}
+
+func ociConfig() (common.ConfigurationProvider, error) {
+	_, err := os.Stat(configfile)
+	if err != nil {
+		return common.DefaultConfigProvider(), nil
+	}
+
+	return common.ConfigurationProviderFromFile(configfile, "")
 }
 
 func writeHosts(target string, hosts *bytes.Buffer) error {
@@ -120,7 +134,11 @@ func writeHosts(target string, hosts *bytes.Buffer) error {
 }
 
 func privateIPs(subnet *string, f func(ip core.PrivateIp)) error {
-	configProvider := common.DefaultConfigProvider()
+	configProvider, err := ociConfig()
+	if err != nil {
+		return err
+	}
+
 	vnClient, err := core.NewVirtualNetworkClientWithConfigurationProvider(configProvider)
 	if err != nil {
 		return err
@@ -151,7 +169,10 @@ func privateIPs(subnet *string, f func(ip core.PrivateIp)) error {
 }
 
 func compartments(compartment string, f func(compartmentId *string)) error {
-	configProvider := common.DefaultConfigProvider()
+	configProvider, err := ociConfig()
+	if err != nil {
+		return err
+	}
 
 	subtree := common.Bool(false)
 	if strings.Contains(compartment, "tenancy") {
@@ -185,7 +206,11 @@ func compartments(compartment string, f func(compartmentId *string)) error {
 }
 
 func vcns(compartment *string, f func(vcn core.Vcn)) error {
-	configProvider := common.DefaultConfigProvider()
+	configProvider, err := ociConfig()
+	if err != nil {
+		return err
+	}
+
 	vnClient, err := core.NewVirtualNetworkClientWithConfigurationProvider(configProvider)
 	if err != nil {
 		return err
@@ -216,7 +241,11 @@ func vcns(compartment *string, f func(vcn core.Vcn)) error {
 }
 
 func subnets(compartment *string, vcn *string, f func(s core.Subnet)) error {
-	configProvider := common.DefaultConfigProvider()
+	configProvider, err := ociConfig()
+	if err != nil {
+		return err
+	}
+
 	vnClient, err := core.NewVirtualNetworkClientWithConfigurationProvider(configProvider)
 	if err != nil {
 		return err
