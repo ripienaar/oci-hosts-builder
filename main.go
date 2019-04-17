@@ -125,6 +125,11 @@ func writeHosts(target string, hosts *bytes.Buffer) error {
 		fmt.Fprintf(tmpfile, hosts.String())
 	}
 
+	err = os.Chmod(target, 0644)
+	if err != nil {
+		return err
+	}
+
 	err = os.Rename(tmpfile.Name(), target)
 	if err != nil {
 		return err
